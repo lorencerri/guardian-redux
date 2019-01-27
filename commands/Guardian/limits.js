@@ -60,7 +60,7 @@ class Limits extends Command {
         this.client.db.set(`limits_${index}_${guild.id}`, value);
         
         // Send Confirmation
-        message.channel.send(embed.setFooter(`Index #${index} successfully updated to ${value}`));
+        message.channel.send(embed.setFooter(`${this.client.main ? '[Primary Node]' : '[Fallback Node]'} Index #${index} successfully updated to ${value}`));
     
     }
 
