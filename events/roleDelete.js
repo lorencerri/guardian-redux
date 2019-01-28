@@ -16,7 +16,7 @@ exports.run = async (client, role) => {
     let memberKey = `roleDeletions_${guild.id}_${executor.id}`;
 
     let data = {
-        target: { id: target.id, tag: `#${entry.changes[3].old}` },
+        target: { id: target.id, tag: `@${entry.changes[3].old}` },
         executor: { id: executor.id, tag: `@${executor.username}#${executor.discriminator}`},
         timestamp: Date.now(),
         type: 'deleted role'

@@ -27,11 +27,11 @@ class Recent extends Command {
             
             // Variables
             let msg = '';
-            let data = this.client.db.get(`${keys[i]}_${guild.id}`).slice(-10).reverse();
+            let data = (this.client.db.get(`${keys[i]}_${guild.id}`) || []).slice(-10).reverse();
             
             // Loop through data
             for (var x in data) msg += `\`${this.client.parseTime(data[x].timestamp)}\` | ${this.client.users.get(data[x].executor.id)} ${data[x].type} ${data[x].target.tag}\n`
-            embed.addField(`${this.client.camelToString(keys[i])} (${data.length})`, msg);
+            embed.addField(`${this.client.camelToString(keys[i])} (${data.length})`, msg || 'none');
             
         }
         

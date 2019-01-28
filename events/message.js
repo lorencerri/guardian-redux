@@ -4,8 +4,8 @@ exports.run = (client, message) => {
     
     // Variables
     let userInfo = { id: message.author.id, tag: message.author.tag };
-    let memberPings = client.pings.get(message.guild.id) || [];
-    let guildPings = client.pings.get(`${message.guild.id}_${userInfo.id}`) || [];
+    let guildPings = client.pings.get(message.guild.id) || [];
+    let memberPings = client.pings.get(`${message.guild.id}_${userInfo.id}`) || [];
     let mentions = message.mentions;
     
     if (mentions.everyone) { // Everyone/Here
@@ -23,7 +23,7 @@ exports.run = (client, message) => {
         guildPings.push({ target: { tag: role.name }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
     });
 
-    if (memberPings.length >= 1) { // Check Limits
+    if (memberPings.length >= 1 && guildPings.length >= 1) { // Check Limits
         client.pings.set(message.guild.id, guildPings);
         client.pings.set(`${message.guild.id}_${userInfo.id}`, memberPings);
         message.guild.checkLimits('pings', userInfo.id);
