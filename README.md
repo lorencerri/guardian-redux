@@ -3,7 +3,7 @@
 Created by [**Plexi Development**](https://discord.gg/plexidev)
 
 > #### TODO:
-> - [ ] Ping Limits
+> - [x] Ping Limits
 > - [ ] Help Command
 > - [ ] Better User Experience
 > - [ ] Bug Testing
