@@ -27,27 +27,27 @@ Structures.extend('Guild', Guild => {
         get limits() {
             return {
                 memberRemovals: {
-                    minute: this.client.db.get(`limits_1_${this.id}`) || 6,
+                    minute: this.client.db.get(`limits_1_${this.id}`) || 8,
                     hour: this.client.db.get(`limits_2_${this.id}`) || 24
                 },
                 channelCreations: {
-                    minute: this.client.db.get(`limits_3_${this.id}`) || 3,
+                    minute: this.client.db.get(`limits_3_${this.id}`) || 4,
                     hour: this.client.db.get(`limits_4_${this.id}`) || 12
                 },
                 channelDeletions: {
-                    minute: this.client.db.get(`limits_5_${this.id}`) || 3,
+                    minute: this.client.db.get(`limits_5_${this.id}`) || 4,
                     hour: this.client.db.get(`limits_6_${this.id}`) || 12
                 },
                 roleCreations: {
-                    minute: this.client.db.get(`limits_7_${this.id}`) || 3,
+                    minute: this.client.db.get(`limits_7_${this.id}`) || 4,
                     hour: this.client.db.get(`limits_8_${this.id}`) || 12
                 },
                 roleDeletions: {
-                    minute: this.client.db.get(`limits_9_${this.id}`) || 3,
+                    minute: this.client.db.get(`limits_9_${this.id}`) || 4,
                     hour: this.client.db.get(`limits_10_${this.id}`) || 12
                 },
                 pings: {
-                    minute: this.client.db.get(`limits_11_${this.id}`) || 12
+                    minute: this.client.db.get(`limits_11_${this.id}`) || 8
                 }
             }
         }
