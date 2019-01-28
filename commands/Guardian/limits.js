@@ -17,7 +17,7 @@ class Limits extends Command {
             .setColor(this.client.EMBED_COLOR);
             
         // Check Permissions
-        if (!message.member.hasPermission('ADMINISTRATOR'))
+        if (this.client.main && !message.member.hasPermission('ADMINISTRATOR'))
             return message.channel.send(embed.setFooter('Sorry, only administrators can run this command.'));
     
         // Variables
