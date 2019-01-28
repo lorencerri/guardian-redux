@@ -1,14 +1,43 @@
 exports.run = (client, message) => {
     
-    // Check for prefix
+    if (!message.channel.guild || !message.guild) return;
+    
+    // Variables
+    let userInfo = { id: message.author.id, tag: message.author.tag };
+    let memberPings = client.pings.get(message.guild.id) || [];
+    let guildPings = client.pings.get(`${message.guild.id}_${userInfo.id}`) || [];
+    let mentions = message.mentions;
+    
+    if (mentions.everyone) { // Everyone/Here
+        memberPings.push({ target: { tag: `everyone/@here` }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+        guildPings.push({ target: { tag: `everyone/@here` }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+    }
+
+    mentions.members.forEach(member => { // Members
+        memberPings.push({ target: { tag: member.user.tag }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+        guildPings.push({ target: { tag: member.user.tag }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+    })
+    
+    mentions.roles.forEach(role => { // Roles
+        memberPings.push({ target: { tag: role.name }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+        guildPings.push({ target: { tag: role.name }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
+    });
+
+    if (memberPings.length >= 1) { // Check Limits
+        client.pings.set(message.guild.id, guildPings);
+        client.pings.set(`${message.guild.id}_${userInfo.id}`, memberPings);
+        message.guild.checkLimits('pings', userInfo.id);
+    }
+    
+    // Return Statements Pt.1
     if (!message.content.startsWith(client.prefix)) return;
+    if (message.author.bot) return;
     
     // Declare & Initialize Variables
     const args = message.content.slice(client.prefix.length).trim().split(/ +/g);
     const cmd = args.shift().toLowerCase();
 
-    // Return Statements
-    if (message.author.bot || !message.channel.guild || !message.guild) return;
+    // Return Statements Pt.2
     if (!client.commands.has(cmd)) return;
     if (!client.main && !['limits'].includes(cmd)) return;
     

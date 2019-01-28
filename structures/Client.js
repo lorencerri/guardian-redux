@@ -17,6 +17,7 @@ class Base extends Discord.Client {
         
         // Modules
         this.db = db;
+        this.pings = new Map();
 
         // Constants
         this.prefix = 'g!';

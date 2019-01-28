@@ -9,6 +9,20 @@ Structures.extend('Guild', Guild => {
             super(...args);
         }
         
+        /* Config */
+        get config() {
+            return {
+                mutedRole: {
+                    SCHEMA: 'Role',
+                    data: this.client.db.get(`mutedRole_${this.id}`) || null
+                },
+                modLog: {
+                    SCHEMA: 'Channel',
+                    data: this.client.db.get(`modLog_${this.id}`) || null
+                }
+            }
+        }
+        
         /* Limits */
         get limits() {
             return {
@@ -39,15 +53,15 @@ Structures.extend('Guild', Guild => {
         }
 
         checkLimits(type, executorID) {
-            
+
             // Owner Bypass
             if (executorID === this.owner.id) return;
             
             // Variables
             let limits = this.limits;
-            let data = this.client.db.get(`${type}_${this.id}_${executorID}`);
+            let data = (type === 'pings' ? this.client.pings.get(`${this.id}_${executorID}`) : this.client.db.get(`${type}_${this.id}_${executorID}`));
             let reached = false;
-            
+
             // Action Limits
             let actionsPerMinute = data.slice(limits[type].minute * -1).reverse();
             let actionsPerHour = data.slice(limits[type].hour * -1).reverse();
@@ -56,12 +70,12 @@ Structures.extend('Guild', Guild => {
             
             // Reached?
             if (lastActionMinute && Date.now() - lastActionMinute.timestamp < 60000) reached = 'Minute';
-            if (lastActionHour && Date.now() - lastActionHour.timestamp < 3.6e+6) reached = 'Hour';
+            if (type !== 'pings' && lastActionHour && Date.now() - lastActionHour.timestamp < 3.6e+6) reached = 'Hour';
             if (!reached) return;
             
-            // Remove Roles
+            // Remove Roles [If not pings]
             let member = this.members.get(executorID);
-            member.roles.set([]).catch(e => console.trace('Remove All Roles'));
+            if (type !== 'pings') member.roles.set([]).catch(e => console.trace('Remove All Roles'));
             
             // If main, output information
             if (!this.client.main) return;
@@ -81,14 +95,28 @@ Structures.extend('Guild', Guild => {
                 .setTitle(`Limit Reached - ${reached}`)
                 .setDescription(description)
                 .addField('Limit Reached By', `${member.user.tag} (${member.id})`)
-                .setFooter('All of the user\'s roles have been automatically removed');
                 
-            // Send Embeds
-            this.owner.send(embed).catch(err => console.trace('Send To Owner'));
+            // Actions
+            if (type === 'pings') {
+                let role = this.roles.get(this.config.mutedRole.data);
+                if (member.roles.find(r => r.name === role.name)) return console.log('Already has muted role, force exiting...');
+                else if (role) {
+                    member.roles.add(role);
+                    embed.setFooter('Automatic Action: Added Muted Role');
+                } else embed.setFooter('Automatic Action: Nothing, set muted role in g!config');
+            } else {
+                embed.setFooter('Automatic Action: All of the user\'s roles have been removed');
+                this.owner.send(embed).catch(err => console.trace('Send To Owner'));
+            }
+            
+            // Mod Log
+            let modLog = this.channels.get(this.config.modLog.data);
+            if (modLog) modLog.send(embed).catch(err => console.trace('Send to Mod Log'))
+            
             member.send(embed).catch(err => console.trace('Send To Executor'));
             
         }
-    
+        
     }
     return GuildExt;
 });
