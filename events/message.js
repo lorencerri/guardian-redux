@@ -39,7 +39,7 @@ exports.run = (client, message) => {
 
     // Return Statements Pt.2
     if (!client.commands.has(cmd)) return;
-    if (!client.main && !['limits'].includes(cmd)) return;
+    if (!client.main && !['limits', 'ping'].includes(cmd)) return;
     
     // Run Command
     const command = client.commands.get(cmd);
