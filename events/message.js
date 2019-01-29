@@ -4,7 +4,7 @@ exports.run = (client, message) => {
     
     // Variables
     let userInfo = { id: message.author.id, tag: message.author.tag };
-    let guildPings = client.pings.get(message.guild.id) || [];
+    let guildPings = client.db.get(`pings_${message.guild.id}`) || [];
     let memberPings = client.pings.get(`${message.guild.id}_${userInfo.id}`) || [];
     let mentions = message.mentions;
     
@@ -13,7 +13,7 @@ exports.run = (client, message) => {
         guildPings.push({ target: { tag: `everyone/@here` }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
     }
 
-    mentions.members.forEach(member => { // Members
+    mentions.members.filter(m => !m.user.bot && m.id !== userInfo.id).forEach(member => { // Members
         memberPings.push({ target: { tag: member.user.tag }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
         guildPings.push({ target: { tag: member.user.tag }, type: 'pinged', executor: userInfo, timestamp: Date.now() });
     })
@@ -24,7 +24,7 @@ exports.run = (client, message) => {
     });
 
     if (memberPings.length >= 1 && guildPings.length >= 1) { // Check Limits
-        client.pings.set(message.guild.id, guildPings);
+        client.db.set(`pings_${message.guild.id}`, guildPings);
         client.pings.set(`${message.guild.id}_${userInfo.id}`, memberPings);
         message.guild.checkLimits('pings', userInfo.id);
     }

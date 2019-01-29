@@ -13,3 +13,7 @@ options.evalID | string | null | The sole userID that can run the eval command
 
 client.run({ main: true, evalID: hidden.evalID });
 client.login(hidden.token);
+
+process.on("unhandledRejection", error => {
+    console.error("Unhandled promise rejection:", error);
+});

@@ -24,7 +24,7 @@ Structures.extend('Guild', Guild => {
         }
         
         get pings() {
-            return this.client.pings.get(this.id);   
+            return this.client.db.get(`pings_${this.id}`);   
         }
         
         /* Limits */
