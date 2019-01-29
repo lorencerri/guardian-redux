@@ -23,6 +23,10 @@ Structures.extend('Guild', Guild => {
             }
         }
         
+        get pings() {
+            return this.client.pings.get(this.id);   
+        }
+        
         /* Limits */
         get limits() {
             return {
@@ -99,7 +103,7 @@ Structures.extend('Guild', Guild => {
             // Actions
             if (type === 'pings') {
                 let role = this.roles.get(this.config.mutedRole.data);
-                if (role && member.roles.find(r => r.name === role.name)) return console.log('Already has muted role, force exiting...');
+                if (!role || member.roles.find(r => r.name === role.name)) return console.log('Already has muted role, force exiting...');
                 else if (role) {
                     member.roles.add(role);
                     embed.setFooter('Automatic Action: Added Muted Role');
